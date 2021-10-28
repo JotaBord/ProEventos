@@ -1,6 +1,6 @@
 <app-titulo [titulo]="'Perfil'"></app-titulo>
 <div class="card rounded shadow-sm">
-<form>
+<form [formGroup]="form" class="p-1">
 	<div class="row p-3">
 		<div class="col-lg-3 pt-1">
 			<div class="card mb-3">
@@ -44,8 +44,10 @@
 				</div>
 				<div class="form-group col">
 					<label>Título</label>
-					<select class="form-control">
-						<option value=""></option>
+					<select class="form-control" formControlName="titulo"
+          [ngClass]="{'is-invalid': f.titulo.errors && f.titulo.touched}"
+          >
+						<option hidden disabled selected value>Selecione:</option>
 						<option value="0">Não Quero</option>
 						<option value="Senhorita">Tecnólogo(a)</option>
 						<option value="Senhorita">Bacharel</option>
@@ -55,38 +57,72 @@
 						<option value="Senhorita">Doutor(a)</option>
 						<option value="Senhorita">Pós Doc</option>
 					</select>
+          <div class="invalid-feedback">
+            Titulo é Obrigatório.
+          </div>
 				</div>
 				<div class="form-group col-sm-5">
 					<label>Primeiro Nome</label>
-					<input type="text" class="form-control"/>
-
+					<input type="text" class="form-control" formControlName="primeiroNome"
+          [ngClass]="{'is-invalid': f.primeiroNome.errors && f.primeiroNome.touched}"
+          placeholder="Insira o Primeiro nome"/>
+          <div class="invalid-feedback">
+            Primeiro Nome é Obrigatório.
+          </div>
 				</div>
 				<div class="form-group col-sm-5">
 					<label>Último nome</label>
-					<input type="text" class="form-control"/>
-
+					<input type="text" class="form-control"formControlName="ultimoNome"
+          [ngClass]="{'is-invalid': f.ultimoNome.errors && f.ultimoNome.touched}"
+          placeholder="Insira o Último nome" />
+        <div class="invalid-feedback">
+          Último Nome é Obrigatório.
+        </div>
 				</div>
 			</div>
 			<div class="form-row">
 				<div class="form-group col-sm-5">
 					<label>E-mail</label>
-					<input type="text" class="form-control" />
+					<input type="text" class="form-control" formControlName="email"
+          [ngClass]="{'is-invalid': f.email.errors && f.email.touched}" placeholder="Insira o E-mail" />
+        <div *ngIf="f.email.errors?.required && f.email.touched" class="invalid-feedback">
+          E-mail é Obrigatório.
+        </div>
+        <div *ngIf="f.email.errors?.email && f.email.touched" class="invalid-feedback">
+          Deve ser um endereço de e-mail válido.
+        </div>
 				</div>
 				<div class="form-group col-sm-4">
 					<label>Telefone</label>
-					<input type="text" class="form-control" />
+					<input type="text" class="form-control" formControlName="telefone"
+          [ngClass]="{'is-invalid': f.telefone.errors && f.telefone.touched}" placeholder="Insira o Telefone" />
+        <div class="invalid-feedback">
+          Telefone é Obrigatório.
+        </div>
 				</div>
 				<div class="form-group col-sm">
 					<label>Função</label>
-					<select class="form-control">
-						<option value=""></option>
+					<select class="form-control" formControlName="funcao"
+          [ngClass]="{'is-invalid': f.funcao.errors && f.funcao.touched}"
+          >
+						<option hidden disabled selected value>Selecione:</option>
 						<option value="Participante">Participante</option>
 						<option value="Palestrante">Palestrante</option>
 					</select>
+          <div class="invalid-feedback">
+            Função é Obrigatório.
+          </div>
 				</div>
 				<form-group class="col-12">
 					<label>Descrição</label>
-					<input type="text" class="form-control" />
+					<input type="text" class="form-control"formControlName="descricao"
+          [ngClass]="{'is-invalid': f.descricao.errors && f.descricao.touched}" placeholder="Insira a Descrição" />
+        <div *ngIf="f.descricao.errors?.required && f.descricao.touched" class="invalid-feedback">
+          Descrição é Obrigatório.
+        </div>
+        <div *ngIf="f.descricao.errors?.maxlength && f.descricao.touched" class="invalid-feedback">
+          Deve ter no máximo 120 caracteres.
+        </div>
 				</form-group>
 			</div>
 			<div>
@@ -95,21 +131,36 @@
 			</div>
 			<div class="form-row">
 				<div class="form-group col-sm">
-					<label>Senha</label>
-					<input type="password" class="form-control" />
-				</div>
-				<div class="form-group col-sm">
-					<label>Confirmar Senha</label>
-					<input type="password" class="form-control" />
-				</div>
-			</div>
+          <label for="">Senha:</label>
+          <input class="form-control" type="password" formControlName="senha"
+            [ngClass]="{'is-invalid': f.senha.errors && f.senha.touched}" placeholder="Digite uma Senha" />
+          <div *ngIf="f.senha.errors?.required && f.senha.touched" class="invalid-feedback">
+            Senha é Obrigatório.
+          </div>
+          <div *ngIf="f.senha.errors?.minlength && f.senha.touched" class="invalid-feedback">
+            Deve ter no mínimo 6 caracteres.
+          </div>
+        </div>
+        <div class="form-group col-sm">
+          <label for="">Confirmar Senha:</label>
+          <input class="form-control" type="password" formControlName="confirmeSenha"
+            [ngClass]="{'is-invalid': f.confirmeSenha.errors && f.confirmeSenha.touched}"
+            placeholder="Confirme a Senha" />
+          <div *ngIf="f.confirmeSenha.errors?.required" class="invalid-feedback">
+            Confirme Senha é Obrigatório.
+          </div>
+          <div *ngIf="f.confirmeSenha.errors?.mustMatch" class="invalid-feedback">
+            Repetir a senha é Obrigatório.
+          </div>
+        </div>
 		</div>
+  </div>
 	</div>
 	<div class="card-footer">
 		<div class="d-flex">
-			<button class="btn btn-outline-secondary mr-auto border">
-				Cancelar Alteração
-			</button>
+			<button (click)="resetForm($event)" class="btn btn-outline-secondary mr-auto border">
+        Cancelar Alteração
+      </button>
 			<button class="btn btn-success">
 				<!-- <span class="spinner-border spinner-border-sm mr-1"></span> -->
 				Salvar Alteração
