@@ -46,7 +46,7 @@ namespace ProEventos.Application
             }
         }
 
-        public async Task<UserDto> CreateAccountAsync(UserDto userDto)
+        public async Task<UserUpdateDto> CreateAccountAsync(UserDto userDto)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace ProEventos.Application
 
                  if (result.Succeeded) 
                  {
-                     var userToReturn = _mapper.Map<UserDto>(user);
+                     var userToReturn = _mapper.Map<UserUpdateDto>(user);
                      return userToReturn;
                  }
                  return null;
@@ -88,28 +88,32 @@ namespace ProEventos.Application
         {
             try
             {
-                 var user = await _userPersist.GetUserByUserNameAsync(userUpdateDto.UserName);
-                 if (user == null) return null;
+                var user = await _userPersist.GetUserByUserNameAsync(userUpdateDto.UserName);
+                if (user == null) return null;
 
-                 _mapper.Map(userUpdateDto, user);
+                userUpdateDto.Id = user.Id;
 
-                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                 var result = await _userManager.ResetPasswordAsync(user, token, userUpdateDto.Password);
+                _mapper.Map(userUpdateDto, user);
 
-                 _userPersist.Update<User>(user);
+                if (userUpdateDto.Password != null) {
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    await _userManager.ResetPasswordAsync(user, token, userUpdateDto.Password);
+                }
 
-                 if (await _userPersist.SaveChangesAsync()) 
-                 {
-                     var userRetorno = await _userPersist.GetUserByUserNameAsync(user.UserName);
+                _userPersist.Update<User>(user);
 
-                     return _mapper.Map<UserUpdateDto>(userRetorno);
-                 }
-                 return null;
+                if (await _userPersist.SaveChangesAsync())
+                {
+                    var userRetorno = await _userPersist.GetUserByUserNameAsync(user.UserName);
+
+                    return _mapper.Map<UserUpdateDto>(userRetorno);
+                }
+
+                return null;
             }
             catch (System.Exception ex)
             {
-                
-                throw new Exception($"Erro ao tentar Atualizar Usuário. Erro: {ex.Message}");
+                throw new Exception($"Erro ao tentar atualizar usuário. Erro: {ex.Message}");
             }
         }
 
